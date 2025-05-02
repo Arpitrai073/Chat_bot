@@ -1,0 +1,24 @@
+// src/store/authStore.js
+import { makeAutoObservable } from "mobx";
+
+class AuthStore {
+  user = null;
+  isAuthenticated = false;
+
+  constructor() {
+    makeAutoObservable(this);
+  }
+
+  setUser(user) {
+    this.user = user;
+    this.isAuthenticated = true;
+  }
+
+  logout() {
+    this.user = null;
+    this.isAuthenticated = false;
+  }
+}
+
+const authStore = new AuthStore();
+export default authStore;
