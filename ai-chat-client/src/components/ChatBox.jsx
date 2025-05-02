@@ -4,7 +4,7 @@ import chatStore from "../store/chatStore";
 import authStore from "../store/authStore";
 import Message from "./Message";
 import Loader from "./Loader";
-import Navbar from "./Navbar"; // ✅ Import Navbar
+import Navbar from "./Navbar";
 
 const ChatBox = observer(() => {
   const [input, setInput] = useState("");
@@ -51,10 +51,13 @@ const ChatBox = observer(() => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <Navbar /> {/* ✅ Navbar added at the top */}
+    <div
+      className="flex flex-col h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] text-white"
+      style={{ backdropFilter: "blur(20px)" }}
+    >
+      <Navbar />
 
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
         {chatStore.messages.map((msg, idx) => (
           <Message key={idx} message={msg} />
         ))}
@@ -62,19 +65,19 @@ const ChatBox = observer(() => {
         <div ref={chatEndRef} />
       </div>
 
-      <div className="sticky bottom-0 bg-white border-t px-4 py-3">
-        <div className="flex items-center gap-2">
+      <div className="sticky bottom-0 bg-white/10 backdrop-blur-lg border-t border-white/20 px-6 py-4">
+        <div className="flex items-center gap-3">
           <input
             type="text"
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Send a message..."
+            className="flex-1 px-4 py-2 rounded-full bg-white/20 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button
             onClick={sendMessage}
-            className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 disabled:opacity-50"
+            className="bg-gray-800 hover:bg-gray-700 transition-all text-white px-5 py-2 rounded-full shadow-lg active:scale-95 disabled:opacity-50"
             disabled={!input.trim()}
           >
             Send
