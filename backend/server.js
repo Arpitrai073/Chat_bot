@@ -51,54 +51,58 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const { protect } = require("./middleware/authMiddleware");
 
-// Route Imports
+
+// Load environment variables
+dotenv.config();
+
+// Import Routes
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const faqRoutes = require("./routes/faqRoutes");
 
-// Middleware
-const { protect } = require("./middleware/authMiddleware");
-
-dotenv.config();
-
 const app = express();
-
-// Debug: Log essential environment variables
-console.log("Hugging Face API Token:", process.env.HUGGINGFACE_API_TOKEN);
-console.log("Hugging Face Model URL:", process.env.HUGGINGFACE_MODEL_URL);
-console.log("MongoDB URI:", process.env.MONGO_URI);
 
 // Global Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/auth", authRoutes);                   // Public: Auth routes
-app.use("/api/chat", chatRoutes);          // Protected: User chat
-app.use("/api/admin",  uploadRoutes); // Protected: Admin uploads
-app.use("/api/admin",  faqRoutes);     // Protected: Admin FAQs
+// Debug: Log key environment variables (hide secrets in production)
+console.log("✅ ENV Loaded:");
+console.log("→ Hugging Face Model URL:", process.env.HUGGINGFACE_MODEL_URL);
+console.log("→ MongoDB URI:", process.env.MONGO_URI);
 
-// Health Check
+// Routes
+app.use("/api/auth", authRoutes);                  // Public: login/register
+
+app.use("/api/chat", chatRoutes);           // User Chat Routes
+app.use("/api/admin", uploadRoutes);       // Admin PDF Uploads
+app.use("/api/admin", faqRoutes);          // Admin Manual FAQs
+
+// Health Check Route
 app.get("/", (req, res) => {
-  console.log("Root endpoint hit");
+  console.log("✔️ Root endpoint hit");
   res.send("✅ AI Chat Support API is running.");
 });
 
-// MongoDB and Server Init
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("✅ MongoDB Connected");
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
-    );
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message);
-    process.exit(1);
-  });
+// MongoDB Connection and Server Start
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
 
+    console.log("✅ MongoDB Connected");
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ MongoDB Connection Failed:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 

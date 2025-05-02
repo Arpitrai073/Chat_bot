@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import chatStore from "../store/chatStore";
+import authStore from "../store/authStore";
 import Message from "./Message";
 import Loader from "./Loader";
+import Navbar from "./Navbar"; // ✅ Import Navbar
 
 const ChatBox = observer(() => {
   const [input, setInput] = useState("");
   const chatEndRef = useRef(null);
 
-  // Scroll to bottom on new message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatStore.messages.length]);
@@ -16,15 +17,19 @@ const ChatBox = observer(() => {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    chatStore.addMessage({ text: input, sender: "user" });
+    const message = input;
+    chatStore.addMessage({ text: message, sender: "user" });
     setInput("");
     chatStore.setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/chat/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, userId: "exampleUserId" }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.user}`,
+        },
+        body: JSON.stringify({ message }),
       });
 
       if (res.ok) {
@@ -32,12 +37,13 @@ const ChatBox = observer(() => {
         chatStore.addMessage({
           text: data.reply,
           sender: "bot",
-          source: data.source, // Optional
+          source: data.source,
         });
       } else {
         chatStore.addMessage({ text: "Server error occurred.", sender: "bot" });
       }
     } catch (err) {
+      console.error("Chat fetch error:", err.message);
       chatStore.addMessage({ text: "Network error. Please try again.", sender: "bot" });
     } finally {
       chatStore.setLoading(false);
@@ -46,7 +52,8 @@ const ChatBox = observer(() => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      {/* Chat area */}
+      <Navbar /> {/* ✅ Navbar added at the top */}
+
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {chatStore.messages.map((msg, idx) => (
           <Message key={idx} message={msg} />
@@ -55,7 +62,6 @@ const ChatBox = observer(() => {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Input area */}
       <div className="sticky bottom-0 bg-white border-t px-4 py-3">
         <div className="flex items-center gap-2">
           <input

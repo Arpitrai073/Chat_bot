@@ -2,21 +2,23 @@
 import { makeAutoObservable } from "mobx";
 
 class AuthStore {
-  user = null;
-  isAuthenticated = false;
+  user = localStorage.getItem("token") || null;
+  isAuthenticated = !!localStorage.getItem("token");
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  setUser(user) {
-    this.user = user;
+  setUser(token) {
+    this.user = token;
     this.isAuthenticated = true;
+    localStorage.setItem("token", token); // persist in localStorage
   }
 
   logout() {
     this.user = null;
     this.isAuthenticated = false;
+    localStorage.removeItem("token");
   }
 }
 
