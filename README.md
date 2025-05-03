@@ -90,6 +90,7 @@ npm run dev
 
 📷 Screenshots
 
+![Image](https://github.com/user-attachments/assets/7e301475-e010-4bc5-ab4f-264a20dad7f1)
 
 ✍️ Author
 Arpit Rai
