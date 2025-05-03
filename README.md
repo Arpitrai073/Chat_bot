@@ -90,11 +90,22 @@ npm run dev
 
 📷 Screenshots
 
-![Image](https://github.com/user-attachments/assets/7e301475-e010-4bc5-ab4f-264a20dad7f1)
+## 📸 Screenshots
+
+| Screenshot 1 | Screenshot 2 | Screenshot 3 |
+|--------------|--------------|--------------|
+| <img src="https://github.com/user-attachments/assets/1d05c545-173e-4a22-be17-f1a52f45d117" width="250"/> | <img src="https://github.com/user-attachments/assets/a07dbf19-d2ae-479f-8590-65c45344405e" width="250"/> | <img src="https://github.com/user-attachments/assets/e0ab97f2-710d-4863-8c15-28b7b3c08a9a" width="250"/> |
+
+| Screenshot 4 | Screenshot 5 |
+|--------------|--------------|
+| <img src="https://github.com/user-attachments/assets/1e29e47c-886b-49ee-a808-35ea2c2c112a" width="250"/> | <img src="https://github.com/user-attachments/assets/38890ec1-dd66-40dd-be69-f20334ed62de" width="250"/> |
+
 
 ✍️ Author
 Arpit Rai
 
-📧 Email
+## 📬 Get in Touch
 
-🌐 GitHub
+[![Email](https://img.shields.io/badge/email-arpitrai906@gmail.com-blue?style=flat&logo=gmail)](mailto:arpitrai906@gmail.com)
+[![GitHub](https://img.shields.io/badge/github-Arpitrai073-181717?style=flat&logo=github)](https://github.com/Arpitrai073)
+
