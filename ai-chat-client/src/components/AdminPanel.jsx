@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Ensure react-router is used in your app
 
 const AdminPanel = () => {
+  const navigate = useNavigate(); // For redirection
   const [faqFile, setFaqFile] = useState(null);
   const [status, setStatus] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -8,26 +10,31 @@ const AdminPanel = () => {
   const [answer, setAnswer] = useState("");
   const [manualFaqs, setManualFaqs] = useState([]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    setStatus("✅ Logged out successfully.");
+    setTimeout(() => navigate("/admin/login"), 1500); // Redirect after 1.5s
+  };
+
   const handleFileChange = (e) => setFaqFile(e.target.files[0]);
 
   const handleUpload = async () => {
     if (!faqFile) return setStatus("❗ Please select a file.");
-
     const formData = new FormData();
     formData.append("file", faqFile);
+    const token = localStorage.getItem("adminToken");
 
     try {
       setIsUploading(true);
       setStatus("⏳ Uploading...");
-
       const response = await fetch("http://localhost:5000/api/admin/upload-faq", {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       const data = await response.json();
       setStatus(response.ok ? "✅ File uploaded successfully!" : `❌ Error: ${data.error}`);
-    } catch (err) {
+    } catch {
       setStatus("⚠️ Error uploading the file.");
     } finally {
       setIsUploading(false);
@@ -35,16 +42,17 @@ const AdminPanel = () => {
   };
 
   const handleManualSubmit = async () => {
-    if (!question.trim() || !answer.trim()) {
-      return setStatus("❗ Both fields are required.");
-    }
-
+    if (!question.trim() || !answer.trim()) return setStatus("❗ Both fields are required.");
     const newFaq = { question, answer };
+    const token = localStorage.getItem("adminToken");
 
     try {
       const res = await fetch("http://localhost:5000/api/admin/manual-faq", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(newFaq),
       });
 
@@ -62,10 +70,12 @@ const AdminPanel = () => {
     }
   };
 
-  // ✅ Fetch manually added FAQs on component load
   const fetchManualFaqs = async () => {
+    const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch("http://localhost:5000/api/admin/manual-faq");
+      const res = await fetch("http://localhost:5000/api/admin/manual-faq", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       if (res.ok) setManualFaqs(data);
     } catch {
@@ -76,18 +86,25 @@ const AdminPanel = () => {
   useEffect(() => {
     fetchManualFaqs();
   }, []);
-  // Auto-clear status after 4 seconds
-useEffect(() => {
+
+  useEffect(() => {
     if (status) {
       const timer = setTimeout(() => setStatus(""), 4000);
       return () => clearTimeout(timer);
     }
   }, [status]);
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-gray-800 p-6 text-white">
-      <div className="max-w-3xl mx-auto bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700">
+      <div className="max-w-3xl mx-auto bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700 relative">
+        {/* 🔒 Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 bg-red-500 hover:bg-red-400 transition px-4 py-2 rounded-lg text-sm font-semibold"
+        >
+          Logout
+        </button>
+
         <h2 className="text-3xl font-bold text-center text-yellow-400 mb-8 drop-shadow-md animate-fade-in">
           Admin FAQ Panel
         </h2>

@@ -9,16 +9,16 @@ const AdminLoginPage = () => {
 
   const handleAdminLogin = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/admin/login", {
+      const res = await fetch("http://localhost:5000/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username: email, password })
       });
 
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem("adminToken", data.token);
-        navigate("/admin/dashboard");
+        localStorage.setItem("adminToken", data.token); // ✅ Store token
+        navigate("/admin"); // ✅ Redirect to protected admin panel
       } else {
         setError(data.message || "Login failed");
       }

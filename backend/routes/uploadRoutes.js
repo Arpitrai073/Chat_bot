@@ -7,9 +7,10 @@ const ManualFaq = require("../models/FAQ"); // ⬅️ New model
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 // ✅ Upload PDF FAQ File
-router.post("/upload-faq", upload.single("file"), async (req, res) => {
+router.post("/upload-faq", protect, adminOnly, upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
@@ -33,7 +34,7 @@ router.post("/upload-faq", upload.single("file"), async (req, res) => {
 
 
 // ✅ Add Manual FAQ
-router.post("/manual-faq", async (req, res) => {
+router.post("/manual-faq",protect, adminOnly, async (req, res) => {
   const { question, answer } = req.body;
   if (!question || !answer) {
     return res.status(400).json({ error: "Question and Answer are required." });

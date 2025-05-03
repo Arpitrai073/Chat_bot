@@ -63,6 +63,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const faqRoutes = require("./routes/faqRoutes");
 
+
 const app = express();
 
 // Global Middleware
@@ -80,6 +81,7 @@ app.use("/api/auth", authRoutes);                  // Public: login/register
 app.use("/api/chat", chatRoutes);           // User Chat Routes
 app.use("/api/admin", uploadRoutes);       // Admin PDF Uploads
 app.use("/api/admin", faqRoutes);          // Admin Manual FAQs
+app.use("/api/admin", require("./routes/adminAuth"));
 
 // Health Check Route
 app.get("/", (req, res) => {
