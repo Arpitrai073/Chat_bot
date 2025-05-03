@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authStore from "../store/authStore"; // MobX store
+import authStore from "../store/authStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -21,9 +21,9 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        authStore.setUser(data.token); // Store token in MobX
+        authStore.setUser(data.token);
         setMsg("✅ Login successful");
-        navigate("/chat"); // Redirect to chat page
+        navigate("/chat");
       } else {
         setMsg(data.message || "❌ Login failed");
       }
@@ -34,32 +34,64 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Login</h2>
-        <form onSubmit={handleLogin}>
+    <div className="min-h-screen bg-gradient-to-br from-[#1F1C2C] via-[#928DAB] to-[#2C3E50] flex items-center justify-center px-4">
+
+      <div className="backdrop-blur-lg bg-white/30 shadow-2xl rounded-3xl p-10 w-full max-w-md border border-white/20 relative">
+        <h2 className="text-3xl font-extrabold text-center text-purple-800 mb-6 drop-shadow">
+          User Login
+        </h2>
+
+        <form onSubmit={handleLogin} className="space-y-5">
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 w-full mb-3"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 backdrop-blur"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
             placeholder="Password"
-            className="border p-2 w-full mb-3"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 backdrop-blur"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <button
-            type="submit" // Change to submit to trigger form submission correctly
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
-          >
-            Login
-          </button>
+  type="submit"
+  className="w-full bg-gradient-to-r from-[#667eea] to-[#764ba2] py-2 rounded-full font-semibold text-white hover:opacity-90 transition"
+>
+  LOGIN
+</button>
+
         </form>
-        {msg && <p className="mt-4 text-center text-sm">{msg}</p>}
+
+        {msg && (
+          <p className="mt-4 text-sm text-center text-gray-800 font-medium backdrop-blur">
+            {msg}
+          </p>
+        )}
+
+        <div className="mt-6 text-center space-y-2">
+          <button
+            onClick={() => navigate("/register")}
+            className="text-blue-800 hover:underline hover:font-semibold transition"
+          >
+            New User? Register
+          </button>
+          <br />
+          <button
+            onClick={() => navigate("/admin/login")}
+            className="text-purple-800 hover:underline hover:font-semibold transition"
+          >
+            Admin? Login here
+          </button>
+        </div>
+
+        {/* Decorative blurred lights */}
+        <div className="absolute -top-6 -left-6 w-24 h-24 bg-blue-400 opacity-30 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-indigo-400 opacity-30 rounded-full blur-3xl"></div>
       </div>
     </div>
   );
